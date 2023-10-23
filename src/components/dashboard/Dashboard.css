@@ -1,0 +1,75 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px,
+    rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+  padding: 15px;
+  position: sticky;
+  top: 0;
+  background-color: #fff;
+}
+
+.header .name {
+  font-size: 2rem;
+}
+
+.posts {
+  margin: 20px;
+}
+
+.createPostLink {
+  font-size: 1.4rem;
+  text-decoration: none;
+  color: inherit;
+  border: 2px solid black;
+  padding: 3px 20px;
+  border-radius: 5px;
+}
+
+.createPostLink:hover {
+  background-color: black;
+  color: white;
+}
+
+.singlePost {
+  display: flex;
+  margin: 10px 0;
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  justify-content: space-around;
+  border: 1px gray solid;
+}
+
+.singlePostLink {
+  color: inherit;
+  text-decoration: none;
+}
+
+.singlePost:hover {
+  background-color: whitesmoke;
+}
+
+.loadMore {
+  display: flex;
+  justify-content: center;
+
+  margin: 20px 0;
+}
+
+.loadMoreBtn {
+  background-color: rgb(230, 228, 228);
+  padding: 9px;
+  cursor: pointer;
+  font-size: larger;
+  border: 2px solid black;
+  flex: 0.6;
+  margin: 0 auto;
+  width: 100px;
+}
+
+.loadMoreBtn:hover {
+  background-color: black;
+  color: white;
+}
