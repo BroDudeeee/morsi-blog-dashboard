@@ -13,7 +13,7 @@ const Dashboard = () => {
   useEffect(() => {
     const getPosts = async () => {
       const res = await axios.get(
-        `${import.meta.env.VITE_SERVER_URL}/posts/page/${pageNum}`
+        `${import.meta.env.VITE_SERVER_URL}api/posts/page/${pageNum}`
       );
       const data = await res.data;
       setPosts([...posts, ...data]);

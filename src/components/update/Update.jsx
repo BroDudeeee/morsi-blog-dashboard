@@ -12,7 +12,7 @@ const Update = () => {
   useEffect(() => {
     const getPost = async () => {
       const res = await axios.get(
-        `${import.meta.env.VITE_SERVER_URL}/posts/post/${postId}`
+        `${import.meta.env.VITE_SERVER_URL}api/posts/post/${postId}`
       );
       const data = await res.data;
       setPost(data);
@@ -36,7 +36,7 @@ const Update = () => {
 
   const handleUpdate = async () => {
     await axios.patch(
-      `${import.meta.env.VITE_SERVER_URL}/posts/post/${postId}`,
+      `${import.meta.env.VITE_SERVER_URL}api/posts/post/${postId}`,
       {
         title: post.title,
         body: post.body,
