@@ -74,7 +74,7 @@ const Post = () => {
         </Link>
       </header>
       <section className="postPage">
-        <img src={postData?.image} alt="" className="postImg" />
+        <img src={postData.image} alt={postData.title} className="postImg" />
         <article className="postPage">
           <h4>{postData?.title}</h4>
           <div

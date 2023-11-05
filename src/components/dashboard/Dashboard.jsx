@@ -12,6 +12,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     const getPosts = async () => {
+      console.log(import.meta.env.VITE_SERVER_URL);
       const res = await axios.get(
         `${import.meta.env.VITE_SERVER_URL}api/posts/page/${pageNum}`
       );
