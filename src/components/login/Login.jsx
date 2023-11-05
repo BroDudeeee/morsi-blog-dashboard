@@ -23,6 +23,7 @@ const Login = () => {
     );
     const data = await res.data;
     setUser(data.name);
+    localStorage.setItem("user", JSON.stringify(data));
   };
 
   return (

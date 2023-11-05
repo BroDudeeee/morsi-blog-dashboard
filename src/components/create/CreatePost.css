@@ -1,0 +1,41 @@
+.create {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 40px;
+}
+
+.create input {
+  padding: 10px 5px;
+  width: 60vw;
+  margin: 5px 0;
+}
+
+.createBtn {
+  background-color: rgb(34, 179, 82);
+  color: #fff;
+  padding: 10px 30px;
+  font-size: larger;
+  letter-spacing: 3px;
+  font-family: Georgia, "Times New Roman", Times, serif;
+  margin: 15px 0;
+  cursor: pointer;
+}
+
+.createBtn:disabled {
+  cursor: auto;
+  opacity: 70%;
+}
+
+.createHeader {
+  display: flex;
+  width: 100vw;
+  justify-content: center;
+  z-index: 3;
+  position: sticky;
+  top: 0;
+  padding: 5px 0;
+  background-color: #fff;
+  border-bottom: 1px solid #000;
+}

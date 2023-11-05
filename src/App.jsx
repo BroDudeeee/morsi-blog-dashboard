@@ -10,7 +10,9 @@ import Update from "./components/update/Update";
 export const UserContext = createContext();
 
 const App = () => {
-  const [user, setUser] = useState("");
+  const userData = JSON.parse(localStorage.getItem("user")) || [];
+
+  const [user, setUser] = useState(userData.name || "");
 
   return (
     <main>

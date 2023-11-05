@@ -6,7 +6,7 @@ import axios from "axios";
 const Post = () => {
   const navigate = useNavigate();
   const { postId } = useParams();
-  const [post, setPost] = useState({ title: "", body: "", category: "" });
+  const [postData, setPostData] = useState({});
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -15,13 +15,7 @@ const Post = () => {
         `${import.meta.env.VITE_SERVER_URL}api/posts/post/${postId}`
       );
       const data = await res.data;
-      const { title, body, createdAt, category } = data;
-      setPost({
-        title,
-        body,
-        createdAt,
-        category,
-      });
+      setPostData(data);
       setIsLoading(false);
     };
     getPost();
@@ -79,16 +73,16 @@ const Post = () => {
           Update
         </Link>
       </header>
-      <article className="postPage">
-        {post.category && (
-          <>
-            / <span className="category">#{post.category.toUpperCase()}</span>
-          </>
-        )}
-
-        <h3 className="title">{post.title}</h3>
-        <p className="body">{post.body}</p>
-      </article>
+      <section className="postPage">
+        <img src={postData?.image} alt="" className="postImg" />
+        <article className="postPage">
+          <h4>{postData?.title}</h4>
+          <div
+            className="body"
+            dangerouslySetInnerHTML={{ __html: postData.body }}
+          />
+        </article>
+      </section>
     </>
   );
 };

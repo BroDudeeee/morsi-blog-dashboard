@@ -1,5 +1,5 @@
 .postPage {
-  width: 50vw;
+  width: 60vw;
   margin: 50px auto;
 }
 
@@ -18,8 +18,19 @@
   line-height: 40px;
 }
 
+.postImg {
+  width: 60vw;
+  margin: 20px auto;
+  background-attachment: red;
+  justify-content: center;
+  display: flex;
+  height: 30rem;
+  object-fit: cover;
+}
+
 @media screen and (max-width: 900px) {
   .postPage {
     width: 80vw;
+    flex-wrap: wrap;
   }
 }
