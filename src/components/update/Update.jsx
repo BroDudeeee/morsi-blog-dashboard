@@ -40,6 +40,7 @@ const Update = () => {
   const [postBody, setPostBody] = useState(null);
   const [disabled, setDisabled] = useState(false);
   const [imgFile, setImgFile] = useState(null);
+  const [postImg, setPostImg] = useState(null);
 
   const storage = getStorage();
   // Create the file metadata
@@ -88,8 +89,8 @@ const Update = () => {
       });
 
     const time = Date.now();
-    const storageRef = ref(storage, "images/" + `${imgFile.name}${time}`);
-    const uploadTask = uploadBytesResumable(storageRef, imgFile, metadata);
+    const storageRef = ref(storage, "images/" + `${postImg.name}${time}`);
+    const uploadTask = uploadBytesResumable(storageRef, postImg, metadata);
 
     uploadTask.on(
       "state_changed",
@@ -164,9 +165,9 @@ const Update = () => {
             name="image"
             id="image"
             placeholder="Upload..."
-            onChange={(e) => setImgFile(e.target.files[0])}
+            onChange={(e) => setPostImg(e.target.files[0])}
           />
-          <button disabled={imgFile == post.image} onClick={updateImage}>
+          <button disabled={!postImg} onClick={updateImage}>
             Update Image
           </button>
         </section>
