@@ -37,7 +37,6 @@ const CreatePost = () => {
   const navigate = useNavigate();
   const [post, setPost] = useState({ title: "", category: "" });
   const [postBody, setPostBody] = useState(null);
-  const [disabled, setDisabled] = useState(false);
   const [imgFile, setImgFile] = useState(null);
   const [postImg, setPostImg] = useState(null);
 
@@ -48,46 +47,48 @@ const CreatePost = () => {
     contentType: "image/jpeg",
   };
 
-  const time = Date.now();
-  const storageRef = ref(storage, "images/" + `${imgFile?.name}${time}`);
-  const uploadTask = uploadBytesResumable(storageRef, imgFile, metadata);
+  const handleUploadImage = () => {
+    if (imgFile) {
+      const time = Date.now();
+      const storageRef = ref(storage, "images/" + `${imgFile.name}${time}`);
+      const uploadTask = uploadBytesResumable(storageRef, imgFile, metadata);
 
-  imgFile &&
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        const progress =
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        console.log("Upload is " + progress + "% done");
-        switch (snapshot.state) {
-          case "paused":
-            console.log("Upload is paused");
-            break;
-          case "running":
-            console.log("Upload is running");
-            break;
-        }
-      },
-      (error) => {
-        switch (error.code) {
-          case "storage/unauthorized":
-            break;
-          case "storage/canceled":
-            break;
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log("Upload is " + progress + "% done");
+          switch (snapshot.state) {
+            case "paused":
+              console.log("Upload is paused");
+              break;
+            case "running":
+              console.log("Upload is running");
+              break;
+          }
+        },
+        (error) => {
+          switch (error.code) {
+            case "storage/unauthorized":
+              break;
+            case "storage/canceled":
+              break;
 
-          case "storage/unknown":
-            break;
+            case "storage/unknown":
+              break;
+          }
+        },
+        () => {
+          // Upload completed successfully, now we can get the download URL
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            console.log("File available at", downloadURL);
+            setPostImg(downloadURL);
+          });
         }
-      },
-      () => {
-        // Upload completed successfully, now we can get the download URL
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          console.log("File available at", downloadURL);
-          setPostImg(downloadURL);
-          setImgFile(null);
-        });
-      }
-    );
+      );
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -95,7 +96,6 @@ const CreatePost = () => {
   };
 
   const handleCreate = async () => {
-    setDisabled(true);
     const res = await axios.post(
       `${import.meta.env.VITE_SERVER_URL}api/posts`,
       {
@@ -105,11 +105,10 @@ const CreatePost = () => {
         image: postImg,
       }
     );
-
     const data = await res.data;
     console.log(data);
+
     navigate("/");
-    setDisabled(false);
   };
 
   return (
@@ -128,7 +127,20 @@ const CreatePost = () => {
           placeholder="Title..."
           onChange={handleChange}
         />
-        <input type="file" onChange={(e) => setImgFile(e.target.files[0])} />
+        <section className="imageUploader">
+          <input
+            type="file"
+            onChange={(e) => setImgFile(e.target.files[0])}
+            className="filePicker"
+          />
+          <button
+            className="fileBtn"
+            onClick={handleUploadImage}
+            disabled={!imgFile}
+          >
+            Upload Image
+          </button>
+        </section>
         <input
           type="text"
           id="cat"
@@ -150,7 +162,7 @@ const CreatePost = () => {
         <button
           onClick={handleCreate}
           className="createBtn"
-          disabled={!postBody || !post.title || disabled || !postImg}
+          disabled={!postBody || !post.title || !postImg}
         >
           Publish
         </button>

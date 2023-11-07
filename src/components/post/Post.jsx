@@ -1,3 +1,4 @@
+import { getStorage, ref, deleteObject } from "firebase/storage";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import "./Post.css";
 import { useEffect, useState } from "react";
@@ -26,8 +27,20 @@ const Post = () => {
       `${import.meta.env.VITE_SERVER_URL}api/posts/post/${postId}`
     );
     const data = await res.data;
-    navigate("/");
+
+    const storage = getStorage();
+
+    const desertRef = ref(storage, data.image);
+
+    deleteObject(desertRef)
+      .then(() => {
+        console.log(desertRef);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
     console.log(data);
+    navigate("/");
   };
 
   if (isLoading)
