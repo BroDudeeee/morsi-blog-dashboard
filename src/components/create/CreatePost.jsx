@@ -5,14 +5,6 @@ import { useState } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css"; // Import Quill styles
 
-import {
-  getStorage,
-  ref,
-  uploadBytesResumable,
-  getDownloadURL,
-} from "firebase/storage";
-import "../../firebase";
-
 const toolbar = [
   ["bold", "italic", "underline", "strike"], // toggled buttons
   ["blockquote", "code-block"],
@@ -37,58 +29,7 @@ const CreatePost = () => {
   const navigate = useNavigate();
   const [post, setPost] = useState({ title: "", category: "" });
   const [postBody, setPostBody] = useState(null);
-  const [imgFile, setImgFile] = useState(null);
   const [postImg, setPostImg] = useState(null);
-
-  const storage = getStorage();
-  // Create the file metadata
-  /** @type {any} */
-  const metadata = {
-    contentType: "image/jpeg",
-  };
-
-  const handleUploadImage = () => {
-    if (imgFile) {
-      const time = Date.now();
-      const storageRef = ref(storage, "images/" + `${imgFile.name}${time}`);
-      const uploadTask = uploadBytesResumable(storageRef, imgFile, metadata);
-
-      uploadTask.on(
-        "state_changed",
-        (snapshot) => {
-          const progress =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          console.log("Upload is " + progress + "% done");
-          switch (snapshot.state) {
-            case "paused":
-              console.log("Upload is paused");
-              break;
-            case "running":
-              console.log("Upload is running");
-              break;
-          }
-        },
-        (error) => {
-          switch (error.code) {
-            case "storage/unauthorized":
-              break;
-            case "storage/canceled":
-              break;
-
-            case "storage/unknown":
-              break;
-          }
-        },
-        () => {
-          // Upload completed successfully, now we can get the download URL
-          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            console.log("File available at", downloadURL);
-            setPostImg(downloadURL);
-          });
-        }
-      );
-    }
-  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -96,14 +37,15 @@ const CreatePost = () => {
   };
 
   const handleCreate = async () => {
+    const formData = new FormData();
+    formData.append("image", postImg);
+    formData.append("title", post.title);
+    formData.append("category", post.category);
+    formData.append("body", postBody);
+
     const res = await axios.post(
       `${import.meta.env.VITE_SERVER_URL}api/posts`,
-      {
-        title: post.title,
-        body: postBody,
-        category: post.category,
-        image: postImg,
-      }
+      formData
     );
     const data = await res.data;
     console.log(data);
@@ -130,16 +72,9 @@ const CreatePost = () => {
         <section className="imageUploader">
           <input
             type="file"
-            onChange={(e) => setImgFile(e.target.files[0])}
-            className="filePicker"
+            onChange={(e) => setPostImg(e.target.files[0])}
+            // className="filePicker"
           />
-          <button
-            className="fileBtn"
-            onClick={handleUploadImage}
-            disabled={!imgFile}
-          >
-            Upload Image
-          </button>
         </section>
         <input
           type="text"

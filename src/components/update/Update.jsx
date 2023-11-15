@@ -3,15 +3,6 @@ import { Link, useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import ReactQuill from "react-quill";
 
-import {
-  getStorage,
-  ref,
-  uploadBytesResumable,
-  getDownloadURL,
-  deleteObject,
-} from "firebase/storage";
-import "../../firebase";
-
 const toolbar = [
   ["bold", "italic", "underline", "strike"], // toggled buttons
   ["blockquote", "code-block"],
@@ -39,15 +30,8 @@ const Update = () => {
   const [post, setPost] = useState({ title: "", category: "" });
   const [postBody, setPostBody] = useState(null);
   const [disabled, setDisabled] = useState(false);
-  const [imgFile, setImgFile] = useState(null);
-  const [postImg, setPostImg] = useState(null);
 
-  const storage = getStorage();
-  // Create the file metadata
-  /** @type {any} */
-  const metadata = {
-    contentType: "image/jpeg",
-  };
+  const [postImg, setPostImg] = useState(null);
 
   useEffect(() => {
     const getPost = async () => {
@@ -57,7 +41,7 @@ const Update = () => {
       const data = await res.data;
 
       setPost(data);
-      setImgFile(data.image);
+      setPostImg(data.image);
       setPostBody(data.body);
       setIsLoading(false);
     };
@@ -77,67 +61,19 @@ const Update = () => {
     setPost({ ...post, [name]: value });
   };
 
-  const updateImage = () => {
-    const desertRef = ref(storage, `${post.image}`);
-
-    deleteObject(desertRef)
-      .then(() => {
-        console.log(desertRef);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-
-    const time = Date.now();
-    const storageRef = ref(storage, "images/" + `${postImg.name}${time}`);
-    const uploadTask = uploadBytesResumable(storageRef, postImg, metadata);
-
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        const progress =
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        console.log("Upload is " + progress + "% done");
-        switch (snapshot.state) {
-          case "paused":
-            console.log("Upload is paused");
-            break;
-          case "running":
-            console.log("Upload is running");
-            break;
-        }
-      },
-      (error) => {
-        switch (error.code) {
-          case "storage/unauthorized":
-            break;
-          case "storage/canceled":
-            break;
-
-          case "storage/unknown":
-            break;
-        }
-      },
-      () => {
-        // Upload completed successfully, now we can get the download URL
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          console.log("File available at", downloadURL);
-          setImgFile(downloadURL);
-        });
-      }
-    );
-  };
-
   const handleUpdate = async () => {
     setDisabled(true);
+
+    const formData = new FormData();
+
+    postImg && formData.append("image", postImg);
+    formData.append("title", post.title);
+    formData.append("category", post.category);
+    formData.append("body", postBody);
+
     await axios.patch(
       `${import.meta.env.VITE_SERVER_URL}api/posts/post/${postId}`,
-      {
-        title: post.title,
-        body: postBody,
-        category: post.category,
-        image: imgFile,
-      }
+      formData
     );
     navigate("/");
     setDisabled(false);
@@ -167,9 +103,6 @@ const Update = () => {
             placeholder="Upload..."
             onChange={(e) => setPostImg(e.target.files[0])}
           />
-          <button disabled={!postImg} onClick={updateImage}>
-            Update Image
-          </button>
         </section>
         <input
           type="text"

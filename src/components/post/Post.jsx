@@ -22,6 +22,16 @@ const Post = () => {
     getPost();
   }, [postId]);
 
+  const arrayBufferToBase64 = (buffer) => {
+    let binary = "";
+    const bytes = new Uint8Array(buffer);
+    const len = bytes.byteLength;
+    for (let i = 0; i < len; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return window.btoa(binary);
+  };
+
   const deletePost = async () => {
     const res = await axios.delete(
       `${import.meta.env.VITE_SERVER_URL}api/posts/post/${postId}`
@@ -87,7 +97,13 @@ const Post = () => {
         </Link>
       </header>
       <section className="postPage">
-        <img src={postData.image} alt={postData.title} className="postImg" />
+        <img
+          src={`data:${postData.image.contentType};base64,${arrayBufferToBase64(
+            postData.image.data.data
+          )}`}
+          alt={postData.title}
+          className="postImg"
+        />
         <article className="postPage">
           <h4>{postData?.title}</h4>
           <div
