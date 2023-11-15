@@ -1,4 +1,3 @@
-import { getStorage, ref, deleteObject } from "firebase/storage";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import "./Post.css";
 import { useEffect, useState } from "react";
@@ -38,17 +37,6 @@ const Post = () => {
     );
     const data = await res.data;
 
-    const storage = getStorage();
-
-    const desertRef = ref(storage, data.image);
-
-    deleteObject(desertRef)
-      .then(() => {
-        console.log(desertRef);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
     console.log(data);
     navigate("/");
   };
